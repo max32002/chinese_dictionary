@@ -21,7 +21,7 @@ if char in dict_data:
 ```
 姚 : {'text': '姚', 'unicode': 23002, 'unicode_hex': '59DA', 'radical': '女', 'radical_count': 3, 'strokes_count': 6, 'strokes_total': 9, 'alternate': [], 'semantic_variant': [], 'pronunciation_mandarin': ['yáo', 'ㄧㄠˊ'], 'pronunciation_cantonese': [], 'pronunciation_southern_min': [], 'component': {'左': '女', '右': '兆'}}
 ```
-![執行結果](https://github.com/max32002/chinese-dictionary/raw/master/preview/runtime-query-dict.png)
+![執行結果](https://github.com/max32002/chinese_dictionary/raw/master/preview/runtime-query-dict.png)
 
 
 執行說明：
