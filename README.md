@@ -1,10 +1,49 @@
 # 簡易中文字典
-一個簡易的字典。能查文字「部首」、「筆畫」的文字數有 81,052 筆，好多哦。資料主是從別人的資料庫搬出來的。
+一個簡易的字典。能查文字「部首」、「筆畫」的文字數有 81,052 筆, 資料主是從別人的資料庫搬出來的, 很多年沒去更新, 也許有些資料是錯誤的。
 
 有「異體字」、「同義字」和「文字組件」的資料有：12,914筆，應該可以應付日常大多數的情況。
 
+## 如何使用 ChineseDictionary 物件?
 
-使用範例：
+1.下載 chinese_dictionary 的 JSON 檔案
+
+* 到 GitHub 專案 下載 Dictionary.json 或 Dictionary_lite.json
+* 放到與 ChineseDictionary.py 相同的資料夾
+
+
+2. ChineseDictionary 使用範例 Python
+```
+from ChineseDictionary import ChineseDictionary
+
+dictionary = ChineseDictionary()  # 不帶入參數到物件, 預設使用完整版
+char = "姚"
+print(dictionary.strokes_total(char))  # 9
+print(dictionary.pronunciation_mandarin(char))  # ['yáo', 'ㄧㄠˊ']
+print(dictionary.component(char))  # {'左': '女', '右': '兆'}
+```
+
+可用 lite=True 選擇精簡版 JSON, 程式碼範例:
+```
+dictionary = ChineseDictionary(lite=True)
+```
+
+直接執行 ChineseDictionary.py 的執行結果:
+```
+『姚』的 Unicode（十進制）: 23002
+『姚』的 Unicode（十六進制）: 59DA
+『姚』的部首: 女
+『姚』的部首筆畫數: 3
+『姚』的非部首筆畫數: 6
+『姚』的總筆畫數: 9
+『姚』的異體字: []
+『姚』的語義變體: []
+『姚』的普通話拼音: []
+『姚』的粵語拼音: []
+『姚』的閩南語拼音: []
+『姚』的組件: {'左': '女', '右': '兆'}
+```
+
+直接存取 Json 檔的使用範例：
 
 ```
 import json
@@ -24,8 +63,13 @@ if char in dict_data:
 ![執行結果](https://github.com/max32002/chinese_dictionary/raw/master/preview/runtime-query-dict.png)
 
 
-執行說明：
-查詢 "姚"，結果是「女」部，女部有3畫，非部首有6畫，總筆數9畫。漢語發音和注音：'yáo', 'ㄧㄠˊ'。文字組成：'左': '女', '右': '兆'
+說明：
+* 部首：「女」，部首筆畫數為 3 畫。
+* 非部首筆畫數：6 畫。
+* 總筆畫數：9 畫。
+* 普通話發音：「yáo」，注音「ㄧㄠˊ」。
+* 組件：左部件為「女」，右部件為「兆」。
+
 
 
 目前可以使用的元件位置(component position)有以下這幾種：
