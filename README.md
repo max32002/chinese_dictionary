@@ -81,6 +81,57 @@ if char in dict_data:
 
 另一個特別的是「'合併', '加'」 這個是一組的，2個必需同時使用。指外面包住裡面。目前只有收到到這幾個：包坐幽。但是規則與「'周圍'＋'中心'」是相似的。
 
+## 如何過濾指定的筆畫數?
+Python 腳本 filter_characters.py，參數說明:
+* --input: 讀取指定的文字檔
+* --output: 結果輸出到指定檔案
+* --radical：只保留部首為該值的字
+* --radical_count：只保留部首筆畫數等於該值的字
+* --strokes_more 只保留筆畫數大於等於該值的字
+
+### 使用方式
+準備輸入文字檔, 建立 input.txt，內容如下：
+```
+漢字測試中字典筆畫
+```
+
+#### 篩選筆畫數大於等於 9 的字
+```
+python filter_characters.py --input input.txt --strokes_more 9 --output output.txt
+```
+結果 (output.txt)：
+```
+漢測試筆畫
+```
+
+#### 篩選部首為「水」的字
+```
+python filter_characters.py --input input.txt --radical 水 --output output.txt
+```
+結果：
+```
+漢測
+```
+
+#### 篩選部首筆畫數 >= 3
+```
+python filter_characters.py --input input.txt --radical_count 3 --output output.txt
+```
+結果
+```
+字字
+```
+
+#### 篩選 筆畫數 ≥ 9 且 部首為「水」 的字：
+```
+python filter_characters.py --input input.txt --strokes_more 9 --radical 水 --output output.txt
+```
+結果：
+```
+漢測
+```
+
+
 ## 附註：
 * Dictionary.json 是完整的資料庫，雖然有 8萬字，但是只有「部首」和「筆劃數」是完整的。
 * Dictionary_lite.json 是精簡版的資料庫，雖然只有 1萬字，但是可以查「部首」、「筆劃數」、「異體字」、「同義字」和「文字組件」，可以針對不同用途選擇適合您的版本。
