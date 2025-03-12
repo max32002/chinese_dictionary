@@ -99,7 +99,7 @@ Python 腳本 filter_characters.py，參數說明:
 ```
 python filter_characters.py --input input.txt --strokes_more 9 --output output.txt
 ```
-結果 (output.txt)：
+結果：
 ```
 漢測試筆畫
 ```
@@ -117,7 +117,7 @@ python filter_characters.py --input input.txt --radical 水 --output output.txt
 ```
 python filter_characters.py --input input.txt --radical_count 3 --output output.txt
 ```
-結果
+結果：
 ```
 字字
 ```
