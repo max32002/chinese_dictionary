@@ -13,10 +13,11 @@ def find_characters_by_radical(input_file, keyword, output_file):
     if keyword:
         search_parts.extend(list(keyword))
 
-    if search_parts:  # 只有在 search_parts 有內容時才做比對
+    if search_parts:
         for char in dictionary.data.keys():
-            if char == dictionary.radical(char):
-                filtered_chars.append(char)
+            for part in search_parts:
+                if part == dictionary.radical(char):
+                    filtered_chars.append(char)
         with open(output_file, "w", encoding="utf-8") as f:
             f.write("".join(filtered_chars))
         print(f"找到 {len(filtered_chars)} 個包含部首 {search_parts} 的字，已輸出到 {output_file}")
