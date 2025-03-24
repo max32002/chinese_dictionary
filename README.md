@@ -198,15 +198,6 @@ python filter_characters.py --input input.txt --radical 水 --output output.txt
 漢測
 ```
 
-#### 篩選部首筆畫數 >= 3
-```
-python filter_characters.py --input input.txt --radical_count 3 --output output.txt
-```
-結果：
-```
-字字
-```
-
 #### 篩選 筆畫數 ≥ 9 且 部首為「水」 的字：
 ```
 python filter_characters.py --input input.txt --strokes_more 9 --radical 水 --output output.txt
