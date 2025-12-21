@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>中文部件查詢系統</title>
+    <meta name="description" content="透過部件查詢中文字，支援部首、組件搜尋" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <div class="logo">
+            <span class="logo-icon">字</span>
+            <h1>中文部件查詢</h1>
+          </div>
+          <p class="subtitle">輸入部件，探索漢字的奧秘</p>
+        </div>
+        <div class="header-decoration"></div>
+      </header>
+
+      <!-- Search Section -->
+      <main class="main-content">
+        <section class="search-section">
+          <div class="search-container">
+            <div class="search-box">
+              <input
+                type="text"
+                id="searchInput"
+                class="search-input"
+                placeholder="輸入部件關鍵字，例如：木、水、火..."
+                autocomplete="off"
+              />
+              <button
+                id="decomposeBtn"
+                class="decompose-btn"
+                title="拆解輸入的字"
+              >
+                <svg
+                  class="decompose-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M16 3h5v5M8 3H3v5M3 16v5h5M21 16v5h-5"></path>
+                  <path d="M12 8v8M8 12h8"></path>
+                </svg>
+                <span>拆解</span>
+              </button>
+              <button id="searchBtn" class="search-btn">
+                <svg
+                  class="search-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <span>搜尋</span>
+              </button>
+            </div>
+            <div class="search-tips">
+              <span class="tip-label">熱門部件：</span>
+              <button class="tip-btn" data-component="木">木</button>
+              <button class="tip-btn" data-component="水">水</button>
+              <button class="tip-btn" data-component="火">火</button>
+              <button class="tip-btn" data-component="土">土</button>
+              <button class="tip-btn" data-component="金">金</button>
+              <button class="tip-btn" data-component="亻">亻</button>
+              <button class="tip-btn" data-component="口">口</button>
+              <button class="tip-btn" data-component="忄">忄</button>
+              <button class="tip-btn" data-component="日">日</button>
+              <button class="tip-btn" data-component="女">女</button>
+              <button class="tip-btn" data-component="扌">扌</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection">
+          <div class="results-header">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+              "
+            >
+              <h2 class="results-title">
+                <span id="resultCount">0</span> 個符合的漢字
+              </h2>
+              <div class="results-info" id="searchInfo"></div>
+            </div>
+            <button id="copyBtn" class="copy-btn">
+              <svg
+                class="copy-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path
+                  d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                ></path>
+              </svg>
+              <span>複製結果</span>
+            </button>
+          </div>
+          <div class="results-grid" id="resultsGrid">
+            <!-- Character cards will be inserted here -->
+          </div>
+          <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p>正在搜尋中...</p>
+          </div>
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🔍</div>
+            <h3>開始探索漢字</h3>
+            <p>輸入部件關鍵字來搜尋包含該部件的所有漢字</p>
+          </div>
+        </section>
+      </main>
+
+      <!-- Character Detail Modal -->
+      <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="characterModal">
+          <button class="modal-close" id="modalClose">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+          </button>
+          <div class="modal-content" id="modalContent">
+            <!-- Character details will be inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>中文部件查詢系統，建議的網站：<a href='https://zi-hi.com/sp/uni/CJKSeeker'>漢字檢索</a>、<a href='https://cdp.sinica.edu.tw/cdphanzi/'>漢字構形資料庫</a>、<a href='https://kanji-database.sourceforge.net/ids/ids.html'>漢字データベースプロジェクト</a>、<a href='https://fgwang.blogspot.com/2015/12/blog-post_30.html'>部件檢索公開授權</a>、<a href='https://ctext.org/dictionary.pl?if=gb'>中國哲學書電子化計劃</a></p>
+      </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -220,6 +220,14 @@ https://max-everyday.com/2020/04/chinese-dictionary-radical/
 https://github.com/ButTaiwan/hanseeker
 * 漢字檢索
 https://zi-hi.com/sp/uni/CJKSeeker
+* 漢字構形資料庫
+https://cdp.sinica.edu.tw/cdphanzi/
+* 漢字データベースプロジェクト
+https://kanji-database.sourceforge.net/ids/ids.html
+* 部件檢索公開授權
+https://fgwang.blogspot.com/2015/12/blog-post_30.html
+* 中國哲學書電子化計劃
+https://ctext.org/dictionary.pl?if=gb
 
 ## 贊助Max
 
