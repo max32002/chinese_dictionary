@@ -151,7 +151,7 @@ try {
             $decomposed_parts = [];
             $has_undecomposable = false;
 
-            $component_keys = ['上', '下', '左', '右', '內', '外', '周遺'];
+            $component_keys = ['合併', '右', '右上', '左右', '左下', '中間', '周圍', '左上', '下', '左', '上左下', '上', '左、右、上'];
 
             // Optimize: fetch all chars in one query
             $char_data_map = get_chars_data($db, $chars);
