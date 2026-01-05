@@ -19,6 +19,9 @@ class ChineseDictionary:
         with open(data_path, "r", encoding="utf-8") as f:
             self.data = json.load(f)
 
+    def info(self, char: str):
+        return self.data.get(char, {})
+
     def unicode(self, char: str) -> int:
         """取得中文字的 Unicode（十進制）"""
         return self.data.get(char, {}).get("unicode", None)
@@ -84,12 +87,13 @@ def get_character_info(keyword):
         print(f"『{char}』的粵語拼音: {dictionary.pronunciation_cantonese(char)}")
         print(f"『{char}』的閩南語拼音: {dictionary.pronunciation_southern_min(char)}")
         print(f"『{char}』的組件: {dictionary.component(char)}")
+        #print(f"『{char}』的dict: {dictionary.info(char)}")
     else:
         print(f"找不到字元：{keyword}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="查詢中文字元資訊")
-    parser.add_argument("--keyword", required=True, help="要查詢的字元")
+    parser.add_argument("keyword", help="要查詢的字元")
 
     args = parser.parse_args()
     get_character_info(args.keyword)

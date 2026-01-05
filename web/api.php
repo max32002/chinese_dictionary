@@ -143,6 +143,11 @@ try {
 
         case 'decompose':
             $text = $_GET['text'] ?? '';
+            // Compatibility: if text is empty but char is set
+            if (!$text) {
+                $text = $_GET['char'] ?? '';
+            }
+
             if (!$text) {
                 send_error('No text specified');
             }
@@ -151,30 +156,26 @@ try {
             $decomposed_parts = [];
             $has_undecomposable = false;
 
-            $component_keys = ['合併', '右', '右上', '左右', '左下', '中間', '周圍', '左上', '下', '左', '上左下', '上', '左、右、上'];
-
-            // Optimize: fetch all chars in one query
-            $char_data_map = get_chars_data($db, $chars);
+            // Prepare statement once
+            $stmt = $db->prepare("SELECT paired1 FROM component WHERE char = :char");
 
             foreach ($chars as $char) {
-                $data = $char_data_map[$char] ?? null;
-                $pushed = false;
+                $stmt->bindValue(':char', $char, SQLITE3_TEXT);
+                $result = $stmt->execute();
+                $row = $result->fetchArray(SQLITE3_ASSOC);
+                // Resetting statement isn't strictly necessary for SQLite3 in simple loop but good practice if needed, 
+                // but SQLite3::reset() is manual. execute() usually resets.
 
-                if ($data && isset($data['component']) && is_array($data['component'])) {
-                    foreach ($component_keys as $key) {
-                        if (isset($data['component'][$key])) {
-                            $decomposed_parts[] = $data['component'][$key];
-                            $pushed = true;
-                        }
-                    }
-                }
-
-                if (!$pushed) {
+                if ($row && !empty($row['paired1'])) {
+                    // paired1 might create multiple chars? usage implies one string replacement
+                    $decomposed_parts[] = $row['paired1'];
+                } else {
                     $decomposed_parts[] = $char;
                     $has_undecomposable = true;
                 }
             }
 
+            // Uniqueness as per original logic requirement
             $unique_parts = array_unique($decomposed_parts);
             $result_str = implode('', $unique_parts);
 

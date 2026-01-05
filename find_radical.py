@@ -26,9 +26,9 @@ def find_characters_by_radical(input_file, keyword, output_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="根據部首關鍵字篩選中文字")
-    parser.add_argument("--input", help="輸入的文字檔 (可選)")
-    parser.add_argument("--keyword", help="要查詢的部首關鍵字 (可選)")
-    parser.add_argument("--output", default="output.txt", help="輸出的文字檔 (預設為 output.txt)")
+    parser.add_argument("--input", "-i", help="輸入的文字檔 (可選)")
+    parser.add_argument("--keyword", "-k", help="要查詢的部首關鍵字 (可選)")
+    parser.add_argument("--output", "-o", default="output.txt", help="輸出的文字檔 (預設為 output.txt)")
 
     args = parser.parse_args()
     find_characters_by_radical(args.input, args.keyword, args.output)
