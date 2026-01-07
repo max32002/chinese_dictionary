@@ -107,23 +107,39 @@ try {
             $index = load_json($index_file);
             $matched_chars = [];
 
-            if ($index) {
-                // Use Index
-                $search_parts = mb_str_split($keyword);
+            $enable_advance_search = false;
+            $advance_search = $_GET['advance_search'] ?? '';
+            if (!$advance_search) {
+                $enable_advance_search = true;
+            }
 
+            // 第一階段：從索引搜尋
+            if ($index) {
+                $search_parts = mb_str_split($keyword);
                 foreach ($search_parts as $part) {
                     if (isset($index[$part])) {
                         $matched_chars = array_merge($matched_chars, $index[$part]);
                     }
                 }
-                $matched_chars = array_unique($matched_chars);
-            } else {
-                // Fallback (Not recommended with DB, scanning whole DB is slow but possible)
-                // For now, let's just return empty or error if index is missing, 
-                // but checking DB row by row is too heavy for standard PHP script time limits usually.
-                // We'll trust optimize_data.py ran correctly.
-                send_error('Search index missing. Please run optimize_data.py');
             }
+
+            // 第二階段：從資料庫搜尋（例如搜尋 paired1 欄位）
+            if(empty($matched_chars) || $enable_advance_search) {
+
+            }
+            $stmt = $db->prepare("SELECT char FROM component WHERE paired1 LIKE :part");
+            $stmt->bindValue(':part', '%' . $keyword . '%', SQLITE3_TEXT);
+            $result = $stmt->execute();
+
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                if (!empty($row['char'])) {
+                    $matched_chars[] = $row['char'];
+                }
+            }
+
+            // 最終階段：合併、去重、重整索引
+            $matched_chars = array_unique($matched_chars);
+            $matched_chars = array_values($matched_chars);
 
             // Limit to 500
             $matched_chars = array_slice($matched_chars, 0, 500);
