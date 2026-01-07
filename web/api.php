@@ -18,7 +18,6 @@ $start_time = microtime(true);
 
 // Configuration
 $db_file = __DIR__ . '/dictionary.db';
-$index_file = __DIR__ . '/search_index.json';
 
 // Helper function to send error
 function send_error($message)
@@ -57,7 +56,7 @@ function get_chars_data($db, $chars)
 
     // Prepare statement with placeholders
     $placeholders = implode(',', array_fill(0, count($chars), '?'));
-    $stmt = $db->prepare("SELECT char, data FROM dictionary WHERE char IN ($placeholders)");
+    $stmt = $db->prepare("SELECT * FROM characters WHERE text IN ($placeholders)");
 
     foreach ($chars as $i => $char) {
         $stmt->bindValue($i + 1, $char, SQLITE3_TEXT);
@@ -66,7 +65,23 @@ function get_chars_data($db, $chars)
     $result = $stmt->execute();
     $data = [];
     while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-        $data[$row['char']] = json_decode($row['data'], true);
+        $data[$row['text']] = [
+            'text' => $row['text'],
+            'unicode' => $row['unicode'],
+            'unicode_hex' => $row['unicode_hex'],
+            'radical' => $row['radical'],
+            'radical_count' => $row['radical_count'],
+            'strokes_count' => $row['strokes_count'],
+            'strokes_total' => $row['strokes_total'],
+            'alternate' => json_decode($row['alternate'], true),
+            'semantic_variant' => json_decode($row['semantic_variant'], true),
+            'pronunciation_mandarin_pinyin' => json_decode($row['pinyin'], true),
+            'pronunciation_mandarin_zhuyin' => json_decode($row['zhuyin'], true),
+            'pronunciation_cantonese' => json_decode($row['cantonese'], true),
+            'pronunciation_southern_min' => json_decode($row['southern_min'], true),
+            'pronunciation_hakka' => json_decode($row['hakka'], true),
+            'component' => json_decode($row['component'], true)
+        ];
     }
     return $data;
 }
@@ -102,53 +117,60 @@ try {
             if (!$keyword) {
                 send_error('No keyword specified');
             }
-
-            // Load Index
-            $index = load_json($index_file);
-            $matched_chars = [];
+            //print_r("\nkeyword:".$keyword);
 
             $enable_advance_search = false;
             $advance_search = $_GET['advance_search'] ?? '';
-            if (!$advance_search) {
+            if ($advance_search) {
                 $enable_advance_search = true;
             }
+            //print_r("\nenable_advance_search:".$enable_advance_search);
 
-            // 第一階段：從索引搜尋
-            if ($index) {
-                $search_parts = mb_str_split($keyword);
-                foreach ($search_parts as $part) {
-                    if (isset($index[$part])) {
-                        $matched_chars = array_merge($matched_chars, $index[$part]);
-                    }
-                }
-            }
+            // initial
+            $matched_chars = [];
+            
+            // Format response (array of {char, data})
+            $results = [];
 
-            // 第二階段：從資料庫搜尋（例如搜尋 paired1 欄位）
-            if(empty($matched_chars) || $enable_advance_search) {
-
-            }
-            $stmt = $db->prepare("SELECT char FROM component WHERE paired1 LIKE :part");
+            // 第一階段：從 characters table 搜尋
+            $stmt = $db->prepare("SELECT * FROM characters WHERE component_values LIKE :part");
             $stmt->bindValue(':part', '%' . $keyword . '%', SQLITE3_TEXT);
             $result = $stmt->execute();
 
             while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-                if (!empty($row['char'])) {
-                    $matched_chars[] = $row['char'];
+                if (!empty($row['text'])) {
+                    $matched_chars[] = $row['text'];
                 }
+            }
+            //print_r("\nmatched_chars count:".count($matched_chars));
+
+            // 第二階段：從 component table 搜尋（例如搜尋 paired1 欄位）
+            if(empty($matched_chars) || $enable_advance_search) {
+                //print_r("\nstart to advanced search");
+
+                $stmt = $db->prepare("SELECT * FROM component WHERE paired1 LIKE :part");
+                $stmt->bindValue(':part', '%' . $keyword . '%', SQLITE3_TEXT);
+                $result = $stmt->execute();
+
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                    //print_r("\nrow:".$row['char']);
+                    if (!empty($row['char'])) {
+                        $matched_chars[] = $row['char'];
+                    }
+                }
+                //print_r("\nmatched_chars count:".count($matched_chars));
             }
 
             // 最終階段：合併、去重、重整索引
             $matched_chars = array_unique($matched_chars);
             $matched_chars = array_values($matched_chars);
 
-            // Limit to 500
-            $matched_chars = array_slice($matched_chars, 0, 500);
+            // Limit to 1000
+            $matched_chars = array_slice($matched_chars, 0, 1000);
 
             // Fetch data from DB
             $db_results = get_chars_data($db, $matched_chars);
 
-            // Format response (array of {char, data})
-            $results = [];
             foreach ($matched_chars as $char) {
                 if (isset($db_results[$char])) {
                     $results[] = ['char' => $char, 'data' => $db_results[$char]];

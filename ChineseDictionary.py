@@ -87,7 +87,7 @@ def get_character_info(keyword):
         print(f"『{char}』的粵語拼音: {dictionary.pronunciation_cantonese(char)}")
         print(f"『{char}』的閩南語拼音: {dictionary.pronunciation_southern_min(char)}")
         print(f"『{char}』的組件: {dictionary.component(char)}")
-        #print(f"『{char}』的dict: {dictionary.info(char)}")
+        print(f"『{char}』的dict: {dictionary.info(char)}")
     else:
         print(f"找不到字元：{keyword}")
 
